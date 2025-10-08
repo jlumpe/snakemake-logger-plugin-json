@@ -368,7 +368,7 @@ class JobFinishedRecord(SnakemakeLogRecord):
 class ShellCmdRecord(SnakemakeLogRecord):
 	event = LogEvent.SHELLCMD
 
-	jobid: int
+	jobid: int | None = None
 	shellcmd: str | None = None
 	rule_name: str | None = None
 
