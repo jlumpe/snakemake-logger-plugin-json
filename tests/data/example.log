@@ -1,0 +1,810 @@
+{
+  "message": "JSON logging plugin initialized",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981037.951069,
+  "pid": 734376,
+  "proc_started": null,
+  "type": "meta",
+  "event": "logging_started"
+}
+{
+  "message": "Assuming unrestricted shared filesystem usage.",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0499134,
+  "type": "standard"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0532775,
+  "workflow_id": "a0281339-7fc4-4b14-b45e-7ce9439569e6",
+  "snakefile": "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/Snakefile",
+  "type": "snakemake",
+  "event": "workflow_started"
+}
+{
+  "message": "host: jared-desktop",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0533595,
+  "type": "standard"
+}
+{
+  "message": "Building DAG of jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0565865,
+  "type": "standard"
+}
+{
+  "message": "Using shell: /usr/bin/bash",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0610487,
+  "type": "standard"
+}
+{
+  "message": "Provided cores: 1 (use --cores to define parallelism)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0612729,
+  "nodes": null,
+  "cores": 1,
+  "provided_resources": null,
+  "type": "snakemake",
+  "event": "resources_info"
+}
+{
+  "message": "Rules claiming more threads will be scaled down.",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.061355,
+  "nodes": null,
+  "cores": null,
+  "provided_resources": null,
+  "type": "snakemake",
+  "event": "resources_info"
+}
+{
+  "message": "Job stats:\njob               count\n--------------  -------\nall                   1\nbcftools_call         1\nbwa_map               2\nplot_quals            1\nsamtools_index        2\nsamtools_sort         2\ntotal                 9\n",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.066967,
+  "stats": {
+    "all": 1,
+    "bcftools_call": 1,
+    "bwa_map": 2,
+    "plot_quals": 1,
+    "samtools_index": 2,
+    "samtools_sort": 2,
+    "total": 9
+  },
+  "type": "snakemake",
+  "event": "run_info"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0687923,
+  "type": "standard"
+}
+{
+  "message": "Failed to solve scheduling problem with ILP solver, falling back to greedy scheduler. You likely have to fix your ILP solver installation. Error message: PULP_CBC_CMD: Not Available (check permissions on cbc)",
+  "levelno": 30,
+  "levelname": "WARNING",
+  "created": 1759981038.0698547,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.070175,
+  "jobs": [
+    4
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: bwa_map, Jobid: 4",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0713794,
+  "jobid": 4,
+  "rule_name": "bwa_map",
+  "threads": 1,
+  "input": [
+    "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/input/genome.fa",
+    "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/input/samples/A.fastq"
+  ],
+  "output": [
+    "mapped_reads/A.bam"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "A"
+  },
+  "reason": "Missing output files: mapped_reads/A.bam",
+  "shellcmd": "touch mapped_reads/A.bam",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: touch mapped_reads/A.bam",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0730867,
+  "jobid": null,
+  "shellcmd": "touch mapped_reads/A.bam",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 4 (Rule: bwa_map)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.078519,
+  "job_id": 4,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0794678,
+  "done": 1,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0809886,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0817325,
+  "jobs": [
+    6
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: bwa_map, Jobid: 6",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0820534,
+  "jobid": 6,
+  "rule_name": "bwa_map",
+  "threads": 1,
+  "input": [
+    "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/input/genome.fa",
+    "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/input/samples/B.fastq"
+  ],
+  "output": [
+    "mapped_reads/B.bam"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "B"
+  },
+  "reason": "Missing output files: mapped_reads/B.bam",
+  "shellcmd": "touch mapped_reads/B.bam",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: touch mapped_reads/B.bam",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0824192,
+  "jobid": null,
+  "shellcmd": "touch mapped_reads/B.bam",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 6 (Rule: bwa_map)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0865302,
+  "job_id": 6,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0870178,
+  "done": 2,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0876348,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0884705,
+  "jobs": [
+    3
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: samtools_sort, Jobid: 3",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0889382,
+  "jobid": 3,
+  "rule_name": "samtools_sort",
+  "threads": 1,
+  "input": [
+    "mapped_reads/A.bam"
+  ],
+  "output": [
+    "sorted_reads/A.bam"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "A"
+  },
+  "reason": "Missing output files: sorted_reads/A.bam; Input files updated by another job: mapped_reads/A.bam",
+  "shellcmd": "cp mapped_reads/A.bam sorted_reads/A.bam",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: cp mapped_reads/A.bam sorted_reads/A.bam",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0893207,
+  "jobid": null,
+  "shellcmd": "cp mapped_reads/A.bam sorted_reads/A.bam",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 3 (Rule: samtools_sort)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0949008,
+  "job_id": 3,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0951765,
+  "done": 3,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0956976,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.096694,
+  "jobs": [
+    5
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: samtools_sort, Jobid: 5",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.097093,
+  "jobid": 5,
+  "rule_name": "samtools_sort",
+  "threads": 1,
+  "input": [
+    "mapped_reads/B.bam"
+  ],
+  "output": [
+    "sorted_reads/B.bam"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "B"
+  },
+  "reason": "Missing output files: sorted_reads/B.bam; Input files updated by another job: mapped_reads/B.bam",
+  "shellcmd": "cp mapped_reads/B.bam sorted_reads/B.bam",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: cp mapped_reads/B.bam sorted_reads/B.bam",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.0975368,
+  "jobid": null,
+  "shellcmd": "cp mapped_reads/B.bam sorted_reads/B.bam",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 5 (Rule: samtools_sort)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.101161,
+  "job_id": 5,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1015506,
+  "done": 4,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1021085,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.103049,
+  "jobs": [
+    8
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: samtools_index, Jobid: 8",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1035972,
+  "jobid": 8,
+  "rule_name": "samtools_index",
+  "threads": 1,
+  "input": [
+    "sorted_reads/B.bam"
+  ],
+  "output": [
+    "sorted_reads/B.bam.bai"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "B"
+  },
+  "reason": "Missing output files: sorted_reads/B.bam.bai; Input files updated by another job: sorted_reads/B.bam",
+  "shellcmd": "cp sorted_reads/B.bam sorted_reads/B.bam.bai",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: cp sorted_reads/B.bam sorted_reads/B.bam.bai",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1041656,
+  "jobid": null,
+  "shellcmd": "cp sorted_reads/B.bam sorted_reads/B.bam.bai",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 8 (Rule: samtools_index)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.108022,
+  "job_id": 8,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1083505,
+  "done": 5,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1090167,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1095266,
+  "jobs": [
+    7
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: samtools_index, Jobid: 7",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1097755,
+  "jobid": 7,
+  "rule_name": "samtools_index",
+  "threads": 1,
+  "input": [
+    "sorted_reads/A.bam"
+  ],
+  "output": [
+    "sorted_reads/A.bam.bai"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {
+    "sample": "A"
+  },
+  "reason": "Missing output files: sorted_reads/A.bam.bai; Input files updated by another job: sorted_reads/A.bam",
+  "shellcmd": "cp sorted_reads/A.bam sorted_reads/A.bam.bai",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: cp sorted_reads/A.bam sorted_reads/A.bam.bai",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.110116,
+  "jobid": null,
+  "shellcmd": "cp sorted_reads/A.bam sorted_reads/A.bam.bai",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 7 (Rule: samtools_index)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.113704,
+  "job_id": 7,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.114014,
+  "done": 6,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.114433,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1150966,
+  "jobs": [
+    2
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: bcftools_call, Jobid: 2",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.115445,
+  "jobid": 2,
+  "rule_name": "bcftools_call",
+  "threads": 1,
+  "input": [
+    "/home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/workflow/input/genome.fa",
+    "sorted_reads/A.bam",
+    "sorted_reads/B.bam",
+    "sorted_reads/A.bam.bai",
+    "sorted_reads/B.bam.bai"
+  ],
+  "output": [
+    "calls/all.vcf"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {},
+  "reason": "Missing output files: calls/all.vcf; Input files updated by another job: sorted_reads/A.bam.bai, sorted_reads/B.bam, sorted_reads/B.bam.bai, sorted_reads/A.bam",
+  "shellcmd": "touch calls/all.vcf",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: touch calls/all.vcf",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1158707,
+  "jobid": null,
+  "shellcmd": "touch calls/all.vcf",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 2 (Rule: bcftools_call)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1192482,
+  "job_id": 2,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1195354,
+  "done": 7,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1199799,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1205158,
+  "jobs": [
+    1
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: plot_quals, Jobid: 1",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1207247,
+  "jobid": 1,
+  "rule_name": "plot_quals",
+  "threads": 1,
+  "input": [
+    "calls/all.vcf"
+  ],
+  "output": [
+    "plots/quals.svg"
+  ],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {},
+  "reason": "Missing output files: plots/quals.svg; Input files updated by another job: calls/all.vcf",
+  "shellcmd": "touch plots/quals.svg",
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: touch plots/quals.svg",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1211271,
+  "jobid": null,
+  "shellcmd": "touch plots/quals.svg",
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 1 (Rule: plot_quals)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1244678,
+  "job_id": 1,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.124774,
+  "done": 8,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Select jobs to execute...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.125202,
+  "type": "standard"
+}
+{
+  "message": "Execute 1 jobs...",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1257343,
+  "jobs": [
+    0
+  ],
+  "type": "snakemake",
+  "event": "job_started"
+}
+{
+  "message": " Rule: all, Jobid: 0",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1259117,
+  "jobid": 0,
+  "rule_name": "all",
+  "threads": 1,
+  "input": [
+    "plots/quals.svg"
+  ],
+  "output": [],
+  "log": [],
+  "benchmark": null,
+  "rule_msg": null,
+  "wildcards": {},
+  "reason": "Input files updated by another job: plots/quals.svg",
+  "shellcmd": null,
+  "priority": 0,
+  "resources": [
+    1,
+    1,
+    "/tmp"
+  ],
+  "type": "snakemake",
+  "event": "job_info"
+}
+{
+  "message": "Shell command: None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.126256,
+  "jobid": null,
+  "shellcmd": null,
+  "rule_name": null,
+  "type": "snakemake",
+  "event": "shellcmd"
+}
+{
+  "message": "Finished jobid: 0 (Rule: all)",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1274168,
+  "job_id": 0,
+  "type": "snakemake",
+  "event": "job_finished"
+}
+{
+  "message": "None",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.1277514,
+  "done": 9,
+  "total": 9,
+  "type": "snakemake",
+  "event": "progress"
+}
+{
+  "message": "Complete log(s): /home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/data/.workdir/example.log, /home/jared/code/python/snakemake/snakemake-logger-plugin-json/tests/data/.workdir/.snakemake/log/2025-10-08T203717.970653.snakemake.log",
+  "levelno": 20,
+  "levelname": "INFO",
+  "created": 1759981038.128551,
+  "type": "standard"
+}
