@@ -8,9 +8,11 @@ from dataclasses import dataclass, field, fields, MISSING
 import time
 from pathlib import PurePath
 
+from pydantic import TypeAdapter, ConfigDict, model_serializer, SerializerFunctionWrapHandler
 from snakemake_interface_logger_plugins.common import LogEvent
 
 
+T = TypeVar('T')
 _T_modeltype = TypeVar('_T_modeltype', bound=type['JsonLogRecord'])
 
 
@@ -26,11 +28,54 @@ def make_registration_decorator(
 	def register(cls: _T_modeltype) -> _T_modeltype:
 		key = getattr(cls, attrname)
 		if key in registry:
-			raise ValueError(f'Model already reigstered for key {key!r}')
+			raise ValueError(f'Model already registered for key {key!r}')
 		registry[key] = cls
 		return cls
 
 	return register
+
+
+class TypeAdapterCache:
+	"""Caches Pydantic TypeAdapters.
+
+	Enables using Pydantic to validate non-BaseModel types (including dataclasses), but avoids
+	creating a new ``TypeAdapter`` instance each time.
+	"""
+
+	cache: dict[type, TypeAdapter]
+
+	def __init__(self):
+		self.cache = dict()
+
+	def get(self, typ: type) -> TypeAdapter:
+		if typ in self.cache:
+			return self.cache[typ]
+		adapter = TypeAdapter(typ)
+		self.cache[typ] = adapter
+		return adapter
+
+	def validate_python(self, typ: type[T], value, **kw) -> T:
+		adapter = self.get(typ)
+		return adapter.validate_python(value, **kw)
+
+	def validate_json(self, typ: type[T], data: str | bytes | bytearray, **kw) -> T:
+		adapter = self.get(typ)
+		return adapter.validate_json(data, **kw)
+
+	def dump_python(self, value, astype: type | None = None, **kw) -> Any:
+		if astype is None:
+			astype = type(value)
+		adapter = self.get(astype)
+		return adapter.dump_python(value, **kw)
+
+	def dump_json(self, value, astype: type | None = None, **kw) -> bytes:
+		if astype is None:
+			astype = type(value)
+		adapter = self.get(astype)
+		return adapter.dump_json(value, **kw)
+
+
+adapter_cache = TypeAdapterCache()
 
 
 # ------------------------------------------------------------------------------------------------ #
@@ -60,8 +105,8 @@ class ExceptionInfo:
 class JsonLogRecord:
 	"""Base class for models of a JSON-formatted log records.
 
-	These are primarily used for parsing records from JSON output, but you can also construct from
-	builtin :class:`logging.LogRecord` instances using the :meth:`from_builtin` method.
+	Can be constructed from builtin :class:`logging.LogRecord` instances using the
+	:meth:`from_builtin` method. Afterwards should be able to be converted to/from JSON losslessly.
 
 	Attributes
 	----------
@@ -76,6 +121,8 @@ class JsonLogRecord:
 	levelname
 	    String associated with numeric level, if any.
 	"""
+
+	# __pydantic_config__: ClassVar = ConfigDict(extra='forbid')
 
 	type: ClassVar[RecordType]
 
@@ -93,6 +140,7 @@ class JsonLogRecord:
 
 	@property
 	def created_dt(self) -> datetime:
+		"""Created timestamp as a :class:`datetime.datetime` instance."""
 		return datetime.fromtimestamp(self.created)
 
 	@staticmethod
@@ -122,7 +170,8 @@ class JsonLogRecord:
 		Assumes the passed record matches the class.
 		"""
 		attrs = cls._get_attrs(record)
-		return cls(**attrs)
+		# return cls(**attrs)
+		return adapter_cache.validate_python(cls, attrs)
 
 	@classmethod
 	def _get_attrs(cls, record: logging.LogRecord) -> dict[str, Any]:
@@ -133,6 +182,14 @@ class JsonLogRecord:
 			levelname=record.levelname,
 			created=record.created,
 		)
+
+	@model_serializer(mode='wrap')
+	def _serialize(self, handler: SerializerFunctionWrapHandler):
+		d = handler(self)
+		d['type'] = self.type
+		if hasattr(self, 'event'):
+			d['event'] = str(self.event)
+		return d
 
 
 @dataclass(kw_only=True)
@@ -200,7 +257,7 @@ class LoggingStartedRecord(MetaLogRecord):
 
 	pid: int
 	proc_started: float | None = None
-	message: str = 'JSON logging plugin initialized'
+	message: str | None = 'JSON logging plugin initialized'
 
 
 @register_meta_model
