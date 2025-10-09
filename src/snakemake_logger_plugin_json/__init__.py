@@ -4,4 +4,5 @@ __author__ = 'Jared Lumpe'
 __email__ = 'jared@jaredlumpe.com'
 
 
-from .logger import LogHandler, LogHandlerSettings
+# Import as standard names for plugin registration to work
+from .logger import JsonLogHandler as LogHandler, JsonLogHandlerSettings as LogHandlerSettings

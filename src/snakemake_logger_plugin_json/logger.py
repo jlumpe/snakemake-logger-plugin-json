@@ -26,7 +26,7 @@ def make_logfile_path(workdir: os.PathLike | None = None, timestamp: datetime | 
 
 
 @dataclass
-class LogHandlerSettings(LogHandlerSettingsBase):
+class JsonLogHandlerSettings(LogHandlerSettingsBase):
 	file: str = field(default=None, metadata={
 		'help': 'File to write to (or - to use stderr).',
 	})
@@ -65,9 +65,9 @@ class JsonFormatter:
 		return self.encoder.encode(json_record)
 
 
-class LogHandler(LogHandlerBase):
+class JsonLogHandler(LogHandlerBase):
 
-	settings: LogHandlerSettings
+	settings: JsonLogHandlerSettings
 	baseFilename: str | None
 	handler: logging.Handler
 
