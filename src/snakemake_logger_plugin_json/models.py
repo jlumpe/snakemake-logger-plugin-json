@@ -393,7 +393,7 @@ class JobInfoRecord(SnakemakeLogRecord):
 	input: list[str] | None = None
 	output: list[str] | None = None
 	log: list[str] | None = None
-	benchmark: list[str] | None = None
+	benchmark: str | None = None
 	rule_msg: str | None = None
 	wildcards: dict[str, Any] | None = None
 	reason: str | None = None
