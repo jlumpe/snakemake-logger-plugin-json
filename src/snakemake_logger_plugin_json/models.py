@@ -2,7 +2,7 @@
 
 from datetime import datetime
 import logging
-from typing import Any, Callable, Self, TypeVar, ClassVar, Literal, TypeAlias
+from typing import Any, Callable, NoReturn, Self, TypeVar, ClassVar, Literal, TypeAlias
 from uuid import UUID
 from dataclasses import dataclass, field, fields, MISSING
 import time
@@ -227,7 +227,7 @@ class MetaLogRecord(JsonLogRecord):
 	levelno: int = 0
 
 	@staticmethod
-	def _builtin_error():
+	def _builtin_error() -> NoReturn:
 		raise TypeError('MetaLogRecord subclasses cannot be constructed from builtin log records')
 
 	@classmethod
