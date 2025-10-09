@@ -503,3 +503,15 @@ class RunInfoRecord(SnakemakeLogRecord):
 	# per_rule_job_counts: dict[str, int]
 	# total_job_counts: int
 	stats: dict[str, int]
+
+
+# ------------------------------------------------------------------------------------------------ #
+#                                               Misc                                               #
+# ------------------------------------------------------------------------------------------------ #
+
+#: All non-abstract model classes
+ALL_MODELS: list[type[JsonLogRecord]] = [
+	StandardLogRecord,
+	*META_RECORD_MODELS.values(),
+	*SNAKEMAKE_RECORD_MODELS.values(),
+]
