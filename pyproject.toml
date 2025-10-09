@@ -20,6 +20,15 @@ dependencies = [
 	"pydantic ~=2.0",
 ]
 
+[project.optional-dependencies]
+app = [
+	"textual",
+]
+
+
+[project.scripts]
+snakemake-log-viewer = "snakemake_logger_plugin_json.app.cli:main"
+
 
 [project.urls]
 Homepage = "https://github.com/jlumpe/snakemake-logger-plugin-json"

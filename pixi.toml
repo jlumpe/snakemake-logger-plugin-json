@@ -12,6 +12,7 @@ version = "0.1.0"
 
 [environments]
 default = { features = ["py311", "test"]}
+app = { features = ["py311", "test", "app"]}
 py312 = { features = ["py312", "test"]}
 py313 = { features = ["py313", "test"]}
 py314 = { features = ["py314", "test"]}
@@ -38,6 +39,10 @@ python = "3.14.*"
 [feature.test.dependencies]
 pytest = "*"
 
+[feature.app.pypi-dependencies]
+snakemake-logger-plugin-json = { path = ".", editable = true, extras = ["app"] }
+textual-dev = "*"
+
 
 # ---------------------------------------------------------------------------- #
 #                                     Tasks                                    #
@@ -45,3 +50,8 @@ pytest = "*"
 
 [feature.test.tasks]
 test = "pytest"
+
+[feature.app.tasks]
+app = "snakemake-log-viewer"
+app-test = "snakemake-log-viewer tests/data/example.log"
+app-console = "textual console"

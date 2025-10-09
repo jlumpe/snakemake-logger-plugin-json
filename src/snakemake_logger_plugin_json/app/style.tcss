@@ -1,0 +1,62 @@
+LogfileApp {
+	TabbedContent {
+		height: 1fr;
+
+		TabPane {
+			# width: 100%;
+			height: 1fr;
+			# border: round yellow;
+
+			DataTable {
+				# border: round green;
+				# width: 100%;
+				# max-width: 80%;
+				# width: 50;
+				overflow-x: hidden;
+			}
+		}
+	}
+}
+
+
+TabPane#log {
+	DataTable {
+		width: 1fr;
+	}
+	LogDetails {
+		width: 1fr;
+	}
+}
+
+
+LogDetails {
+	border: panel grey;
+	padding-top: 1;
+
+	&.record-info {
+		# border: panel white;
+	}
+	&.record-warning {
+		border: panel $warning;
+	}
+	&.record-error {
+		border: panel $error;
+	}
+	&.record-critical {
+		border: panel $error;
+	}
+
+	* {
+		width: 100%;
+		# width: 1fr;
+	}
+
+	#message {
+		border: solid grey;
+		# width: 100%;
+	}
+
+	# Pretty {
+	# 	border: solid grey;
+	# }
+}
