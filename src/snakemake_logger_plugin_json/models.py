@@ -358,6 +358,10 @@ class SnakemakeLogRecord(JsonLogRecord):
 
 		return attrs
 
+	def associated_jobs(self) -> list[int]:
+		"""Get any job IDs this record is associated with."""
+		return []
+
 
 @register_snakemake_model
 @dataclass(kw_only=True)
@@ -402,6 +406,9 @@ class JobInfoRecord(SnakemakeLogRecord):
 	# resources: dict[str, Any] | None = None
 	resources: dict[str, Any] | list[Any] | None = None
 
+	def associated_jobs(self) -> list[int]:
+		return [self.jobid]
+
 
 @register_snakemake_model
 @dataclass(kw_only=True)
@@ -411,6 +418,9 @@ class JobStartedRecord(SnakemakeLogRecord):
 	# job_ids: list[int]
 	jobs: list[int]
 
+	def associated_jobs(self) -> list[int]:
+		return self.jobs
+
 
 @register_snakemake_model
 @dataclass(kw_only=True)
@@ -418,6 +428,9 @@ class JobFinishedRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_FINISHED
 
 	job_id: int
+
+	def associated_jobs(self) -> list[int]:
+		return [self.job_id]
 
 
 @register_snakemake_model
@@ -429,6 +442,9 @@ class ShellCmdRecord(SnakemakeLogRecord):
 	shellcmd: str | None = None
 	rule_name: str | None = None
 
+	def associated_jobs(self) -> list[int]:
+		return [] if self.jobid is None else [self.jobid]
+
 
 @register_snakemake_model
 @dataclass(kw_only=True)
@@ -436,6 +452,9 @@ class JobErrorRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_ERROR
 
 	jobid: int
+
+	def associated_jobs(self) -> list[int]:
+		return [self.jobid]
 
 
 @register_snakemake_model
@@ -445,6 +464,9 @@ class GroupInfoRecord(SnakemakeLogRecord):
 
 	group_id: int
 	jobs: list[Any]
+
+	def associated_jobs(self) -> list[int]:
+		return self.jobs
 
 
 @register_snakemake_model
