@@ -185,10 +185,10 @@ class JsonLogRecord:
 
 	@model_serializer(mode='wrap')
 	def _serialize(self, handler: SerializerFunctionWrapHandler):
-		d = handler(self)
-		d['type'] = self.type
+		d = dict(type=self.type)
 		if hasattr(self, 'event'):
 			d['event'] = str(self.event)
+		d |= handler(self)
 		return d
 
 
