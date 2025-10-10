@@ -2,7 +2,7 @@
 """
 
 import json
-from typing import Any, Iterable, Mapping, TypeAlias, get_args
+from typing import Any, Iterable, Iterator, Mapping, TypeAlias, get_args
 from dataclasses import dataclass
 
 from .models import JsonLogRecord, StandardLogRecord, adapter_cache, META_RECORD_MODELS, SNAKEMAKE_RECORD_MODELS
@@ -186,7 +186,7 @@ class JsonObjectParser:
 			)
 
 
-def parse_logfile(lines: Iterable[str]) -> Iterable[JsonLogRecord]:
+def parse_logfile(lines: Iterable[str]) -> Iterator[JsonLogRecord]:
 	parser = JsonObjectParser()
 
 	for l1, l2, obj in parser.process_lines(lines):
