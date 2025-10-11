@@ -91,6 +91,7 @@ class JsonLogHandler(LogHandlerBase):
 	handler: logging.Handler
 
 	def __init__(self, *args):
+		logging.Handler.__init__(self)
 		LogHandlerBase.__init__(self, *args)
 
 	def __post_init__(self) -> None:
