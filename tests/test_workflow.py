@@ -26,12 +26,14 @@ def test_run_workflow(tmp_path: Path):
 		'-s', str(TEST_DIR / 'workflow/Snakefile'),
 		'-d', str(workdir.absolute()),
 		'-c', '4',
+		'--keep-going',
 		'--logger', 'json',
 		'--logger-json-file', str(logfile.absolute()),
 		'--logger-json-validate',
 		'--logger-json-rulegraph',
 	]
-	run(cmd, check=True)
+	run(cmd)#, check=True)
+	assert logfile.is_file()
 
 	# Parse
 	records = []

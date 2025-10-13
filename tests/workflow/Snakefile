@@ -3,23 +3,34 @@
 import os
 
 
+rule all:
+    default_target: True
+    input:
+        'example/.completed',
+        'errors/.all',
+
+
+# ------------------------------------------------------------------------------------------------ #
+#                                         Example workflow                                         #
+# ------------------------------------------------------------------------------------------------ #
+
 SAMPLES = ["A", "B"]
 
-IN_DIR = config.get('in_dir', os.path.join(workflow.basedir, 'input'))
+EXAMPLE_IN = config.get('in_dir', os.path.join(workflow.basedir, 'input'))
 
 
-
-rule all:
+rule example:
     input:
-        "plots/quals.svg"
+        "example/plots/quals.svg"
+    output: touch('example/.completed')
 
 
 rule bwa_map:
     input:
-        f"{IN_DIR}/genome.fa",
-        f"{IN_DIR}/samples/{{sample}}.fastq"
+        f"{EXAMPLE_IN}/genome.fa",
+        f"{EXAMPLE_IN}/samples/{{sample}}.fastq"
     output:
-        "mapped_reads/{sample}.bam"
+        "example/mapped_reads/{sample}.bam"
     shell:
         # "bwa mem {input} | samtools view -Sb - > {output}"
         "touch {output}"
@@ -27,9 +38,9 @@ rule bwa_map:
 
 rule samtools_sort:
     input:
-        "mapped_reads/{sample}.bam"
+        "example/mapped_reads/{sample}.bam"
     output:
-        "sorted_reads/{sample}.bam"
+        "example/sorted_reads/{sample}.bam"
     shell:
         # "samtools sort -T sorted_reads/{wildcards.sample} "
         # "-O bam {input} > {output}"
@@ -38,9 +49,9 @@ rule samtools_sort:
 
 rule samtools_index:
     input:
-        "sorted_reads/{sample}.bam"
+        "example/sorted_reads/{sample}.bam"
     output:
-        "sorted_reads/{sample}.bam.bai"
+        "example/sorted_reads/{sample}.bam.bai"
     shell:
         # "samtools index {input}"
         "cp {input} {output}"
@@ -48,11 +59,11 @@ rule samtools_index:
 
 rule bcftools_call:
     input:
-        fa=f"{IN_DIR}/genome.fa",
-        bam=expand("sorted_reads/{sample}.bam", sample=SAMPLES),
-        bai=expand("sorted_reads/{sample}.bam.bai", sample=SAMPLES)
+        fa=f"{EXAMPLE_IN}/genome.fa",
+        bam=expand("example/sorted_reads/{sample}.bam", sample=SAMPLES),
+        bai=expand("example/sorted_reads/{sample}.bam.bai", sample=SAMPLES)
     output:
-        "calls/all.vcf"
+        "example/calls/all.vcf"
     shell:
         # "bcftools mpileup -f {input.fa} {input.bam} | "
         # "bcftools call -mv - > {output}"
@@ -61,10 +72,46 @@ rule bcftools_call:
 
 rule plot_quals:
     input:
-        "calls/all.vcf"
+        "example/calls/all.vcf"
     output:
-        "plots/quals.svg"
+        "example/plots/quals.svg"
     # script:
     #     "scripts/plot-quals.py"
     shell:
         "touch {output}"
+
+
+# ------------------------------------------------------------------------------------------------ #
+#                                              Errors                                              #
+# ------------------------------------------------------------------------------------------------ #
+
+
+# Error in script
+rule error_script:
+    output: 'errors/.script'
+    script: 'scripts/error-script.py'
+
+
+# Error in run section
+rule error_run:
+    output: 'errors/.run'
+    run:
+        raise RuntimeError('Planned error')
+
+
+# Error in shell section
+rule error_shell:
+    output: 'errors/.shell'
+    shell:
+        """
+        echo Planned error:
+        false
+        """
+
+rule errors:
+    input:
+        'errors/.script',
+        'errors/.run',
+        'errors/.shell',
+    output: 'errors/.all'
+

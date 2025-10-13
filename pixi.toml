@@ -11,7 +11,7 @@ version = "0.1.0"
 # ---------------------------------------------------------------------------- #
 
 [environments]
-default = { features = ["py311", "test"]}
+default = { features = ["py311", "test", "workflow"]}
 py312 = { features = ["py312", "test"]}
 py313 = { features = ["py313", "test"]}
 py314 = { features = ["py314", "test"]}
@@ -38,6 +38,9 @@ python = "3.14.*"
 [feature.test.dependencies]
 pytest = "*"
 
+[feature.workflow.dependencies]
+snakemake = "9.*"
+
 
 # ---------------------------------------------------------------------------- #
 #                                     Tasks                                    #
@@ -45,3 +48,6 @@ pytest = "*"
 
 [feature.test.tasks]
 test = "pytest"
+
+[feature.workflow.tasks]
+workflow = "make -B -C tests/data"
