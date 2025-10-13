@@ -37,6 +37,7 @@ python = "3.14.*"
 
 [feature.test.dependencies]
 pytest = "*"
+pytest-cov = "*"
 
 [feature.workflow.dependencies]
 snakemake = "9.*"
@@ -48,6 +49,7 @@ snakemake = "9.*"
 
 [feature.test.tasks]
 test = "pytest"
+test-cov = "pytest --cov=snakemake_logger_plugin_json --cov-report=html"
 
 [feature.workflow.tasks]
 workflow = "make -B -C tests/data"

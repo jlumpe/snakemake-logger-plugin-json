@@ -4,7 +4,7 @@ import snakemake_logger_plugin_json.json as json_module
 from snakemake_logger_plugin_json import models
 
 
-def test_record_roundtrip(example_records):
+def test_record_roundtrip(example_records: list[models.JsonLogRecord]):
 	"""Test round-tripping records to JSON."""
 
 	for record in example_records:
