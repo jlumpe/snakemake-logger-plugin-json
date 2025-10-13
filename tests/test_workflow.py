@@ -6,8 +6,8 @@ from warnings import warn
 
 import pytest
 
-from snakemake_logger_plugin_json.json import logrecord_from_json
-from snakemake_logger_plugin_json.models import ALL_MODELS
+from snakemake_logger_plugin_json.json import parse_logfile
+from snakemake_logger_plugin_json.models import ALL_MODELS, LoggingStartedRecord, LoggingFinishedRecord
 
 
 TEST_DIR = Path(__file__).parent
@@ -32,15 +32,15 @@ def test_run_workflow(tmp_path: Path):
 		'--logger-json-validate',
 		'--logger-json-rulegraph',
 	]
-	run(cmd)#, check=True)
+	run(cmd)
 	assert logfile.is_file()
 
 	# Parse
-	records = []
-
 	with open(logfile) as fh:
-		for line in fh:
-			records.append(logrecord_from_json(line))
+		records = list(parse_logfile(fh))
+
+	assert isinstance(records[0], LoggingStartedRecord)
+	assert isinstance(records[-1], LoggingFinishedRecord)
 
 	# Ideally we'd like to generate and test all types of record. Add a warning about record types
 	# which were not generated.
