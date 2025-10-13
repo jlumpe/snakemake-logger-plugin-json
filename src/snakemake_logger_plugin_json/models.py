@@ -2,9 +2,11 @@
 
 from datetime import datetime
 import logging
-from typing import Any, Callable, NoReturn, Self, TypeVar, ClassVar, Literal, TypeAlias
+from typing import (
+	Any, Callable, NoReturn, Self, TypeVar, ClassVar, Literal, TypeAlias, dataclass_transform,
+)
 from uuid import UUID
-from dataclasses import dataclass, field, fields, MISSING
+from dataclasses import dataclass, field, fields, Field, MISSING
 import time
 from pathlib import PurePath
 
@@ -198,6 +200,17 @@ class JsonLogRecord:
 				attrs['exc_info'] = ExceptionInfo.from_exception(exc)
 		return attrs
 
+	def to_builtin(self, **kw) -> logging.LogRecord:
+		"""Convert back to a builtin ``LogRecord`` instance.
+
+		Primarily for testing.
+		"""
+		kw.setdefault('msg', self.message)
+		kw.setdefault('message', self.message)
+		kw.setdefault('levelno', self.levelno)
+		kw.setdefault('created', self.created)
+		return logging.makeLogRecord(kw)
+
 	@model_serializer(mode='wrap')
 	def _serialize(self, handler: SerializerFunctionWrapHandler):
 		# Set these first so they appear at the of the record in multiline format, for easier reading
@@ -210,6 +223,9 @@ class JsonLogRecord:
 		if d['exc_info'] is None:
 			del d['exc_info']
 		return d
+
+
+_BASE_FIELDNAMES = {field.name for field in fields(JsonLogRecord)}
 
 
 @dataclass(kw_only=True)
@@ -366,6 +382,24 @@ SNAKEMAKE_RECORD_MODELS: dict[LogEvent, type["SnakemakeLogRecord"]] = dict()
 register_snakemake_model = make_registration_decorator(SNAKEMAKE_RECORD_MODELS, 'event')
 
 
+@dataclass_transform(kw_only_default=True)
+def snakemake_model(register: bool = True):
+	"""Decorator to apply to a child of :class:`.SnakemakeLogRecord`.
+
+	This applies the dataclass decorator, registers it based on event type, and sets the
+	``_extra_fields`` class attribute.
+	"""
+
+	def decorator(cls):
+		dataclass(cls, kw_only=True)
+		if register:
+			register_snakemake_model(cls)
+		cls._extra_fields = tuple(field for field in fields(cls) if field.name not in _BASE_FIELDNAMES)
+		return cls
+
+	return decorator
+
+
 class SnakemakeLogRecord(JsonLogRecord):
 	"""Base class for a Snakemake log record model.
 
@@ -377,27 +411,32 @@ class SnakemakeLogRecord(JsonLogRecord):
 
 	type = 'snakemake'
 	event: ClassVar[LogEvent]
+	_extra_fields: ClassVar[tuple[Field, ...]] = ()
 
 	@classmethod
 	def _get_attrs(cls, record: logging.LogRecord) -> dict[str, Any]:
 		attrs = super()._get_attrs(record)
 
-		for field in fields(cls):
-			if field.name not in attrs:
-				if hasattr(record, field.name):
-					attrs[field.name] = getattr(record, field.name)
-				elif field.default is MISSING and field.default_factory is MISSING:
-					raise AttributeError(f'LogRecord with event type {cls.event} missing required attribute {field.name!r}')
+		for field in cls._extra_fields:
+			if hasattr(record, field.name):
+				attrs[field.name] = getattr(record, field.name)
+			elif field.default is MISSING and field.default_factory is MISSING:
+				raise AttributeError(f'LogRecord with event type {cls.event} missing required attribute {field.name!r}')
 
 		return attrs
+
+	def to_builtin(self, **kw) -> logging.LogRecord:
+		for field in self._extra_fields:
+			kw.setdefault(field.name, getattr(self, field.name))
+		kw.setdefault('event', self.event)
+		return super().to_builtin(**kw)
 
 	def associated_jobs(self) -> list[int]:
 		"""Get any job IDs this record is associated with."""
 		return []
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class ErrorRecord(SnakemakeLogRecord):
 	event = LogEvent.ERROR
 
@@ -409,8 +448,7 @@ class ErrorRecord(SnakemakeLogRecord):
 	line: str | None = None
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class WorkflowStartedRecord(SnakemakeLogRecord):
 	event = LogEvent.WORKFLOW_STARTED
 
@@ -419,8 +457,7 @@ class WorkflowStartedRecord(SnakemakeLogRecord):
 	snakefile: PurePath | None
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class JobInfoRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_INFO
 
@@ -443,8 +480,7 @@ class JobInfoRecord(SnakemakeLogRecord):
 		return [self.jobid]
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class JobStartedRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_STARTED
 
@@ -455,8 +491,7 @@ class JobStartedRecord(SnakemakeLogRecord):
 		return self.jobs
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class JobFinishedRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_FINISHED
 
@@ -466,8 +501,7 @@ class JobFinishedRecord(SnakemakeLogRecord):
 		return [self.job_id]
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class ShellCmdRecord(SnakemakeLogRecord):
 	event = LogEvent.SHELLCMD
 
@@ -479,8 +513,7 @@ class ShellCmdRecord(SnakemakeLogRecord):
 		return [] if self.jobid is None else [self.jobid]
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class JobErrorRecord(SnakemakeLogRecord):
 	event = LogEvent.JOB_ERROR
 
@@ -490,8 +523,7 @@ class JobErrorRecord(SnakemakeLogRecord):
 		return [self.jobid]
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class GroupInfoRecord(SnakemakeLogRecord):
 	event = LogEvent.GROUP_INFO
 
@@ -502,8 +534,7 @@ class GroupInfoRecord(SnakemakeLogRecord):
 		return self.jobs
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class GroupErrorRecord(SnakemakeLogRecord):
 	event = LogEvent.GROUP_ERROR
 
@@ -512,8 +543,7 @@ class GroupErrorRecord(SnakemakeLogRecord):
 	job_error_info: dict[str, Any]
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class ResourcesInfoRecord(SnakemakeLogRecord):
 	event = LogEvent.RESOURCES_INFO
 
@@ -522,8 +552,7 @@ class ResourcesInfoRecord(SnakemakeLogRecord):
 	provided_resources: dict[str, Any] | None = None
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class DebugDagRecord(SnakemakeLogRecord):
 	event = LogEvent.DEBUG_DAG
 
@@ -533,8 +562,7 @@ class DebugDagRecord(SnakemakeLogRecord):
 	exception: str | None = None
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class ProgressRecord(SnakemakeLogRecord):
 	event = LogEvent.PROGRESS
 
@@ -542,16 +570,14 @@ class ProgressRecord(SnakemakeLogRecord):
 	total: int
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class RulegraphRecord(SnakemakeLogRecord):
 	event = LogEvent.RULEGRAPH
 
 	rulegraph: dict[str | None, Any] | None = None
 
 
-@register_snakemake_model
-@dataclass(kw_only=True)
+@snakemake_model()
 class RunInfoRecord(SnakemakeLogRecord):
 	event = LogEvent.RUN_INFO
 
