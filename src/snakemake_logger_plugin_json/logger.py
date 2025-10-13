@@ -70,11 +70,7 @@ class JsonFormatter:
 			return record
 
 		try:
-			json_record = JsonLogRecord.from_builtin(record)
-			if self.validate:
-				adapter = TypeAdapter(type(json_record))
-				adapter.validate_python(json_record.__dict__)
-			return json_record
+			return JsonLogRecord.from_builtin(record)
 
 		except Exception as exc:
 			return self._make_error_record(record, exc)
@@ -111,7 +107,7 @@ class JsonLogHandler(LogHandlerBase):
 
 			self.handler = logging.FileHandler(self.baseFilename, mode='w')
 
-		formatter = JsonFormatter(multiline=self.settings.multiline)
+		formatter = JsonFormatter(multiline=self.settings.multiline, validate=self.settings.validate)
 		self.handler.setFormatter(formatter)  # type: ignore
 
 		start = LoggingStartedRecord(pid=os.getpid())
