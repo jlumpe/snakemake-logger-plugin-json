@@ -8,7 +8,10 @@ from pydantic import TypeAdapter
 from snakemake_interface_logger_plugins.base import LogHandlerBase
 from snakemake_interface_logger_plugins.settings import LogHandlerSettingsBase
 
-from .models import JsonLogRecord, FormattingErrorRecord, LoggingStartedRecord, adapter_cache
+from .models import (
+	JsonLogRecord, FormattingErrorRecord, LoggingStartedRecord, LoggingFinishedRecord,
+	adapter_cache,
+)
 
 
 def make_logfile_path(workdir: os.PathLike | None = None, timestamp: datetime | None = None) -> str:
@@ -118,6 +121,7 @@ class JsonLogHandler(LogHandlerBase):
 		self.handler.emit(record)
 
 	def close(self):
+		self.handler.emit(LoggingFinishedRecord())  # type: ignore
 		self.handler.close()
 
 	def flush(self):

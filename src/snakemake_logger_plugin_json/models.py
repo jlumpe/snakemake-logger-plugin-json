@@ -281,6 +281,18 @@ class LoggingStartedRecord(MetaLogRecord):
 
 @register_meta_model
 @dataclass(kw_only=True)
+class LoggingFinishedRecord(MetaLogRecord):
+	"""Indicates that the logging system has shut down and closed successfully.
+	"""
+
+	event = 'logging_finished'
+
+	levelno: int = logging.INFO
+	message: str | None = 'Logging concluded'
+
+
+@register_meta_model
+@dataclass(kw_only=True)
 class FormattingErrorRecord(MetaLogRecord):
 	"""Indicates an error formatting a log record.
 
