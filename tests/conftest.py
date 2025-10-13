@@ -22,7 +22,6 @@ def example_records() -> list[models.JsonLogRecord]:
 
 		kw.setdefault('message', f'Test {cls}')
 		kw.setdefault('levelno', levels[i % len(levels)])
-		kw['levelname'] = logging.getLevelName(kw['levelno'])
 		kw.setdefault('created', RANDOM_TIMESTAMP + i * 5.13917)
 
 		from dataclasses import fields

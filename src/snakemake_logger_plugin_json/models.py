@@ -20,6 +20,9 @@ _T_modeltype = TypeVar('_T_modeltype', bound=type['JsonLogRecord'])
 RecordType: TypeAlias = Literal['standard', 'meta', 'snakemake']
 
 
+NAMED_LEVELS = (logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL)
+
+
 def make_registration_decorator(
 	registry: dict[Any, Any],
 	attrname: str,
@@ -89,12 +92,13 @@ class ExceptionInfo:
 	message: str
 	type: str
 
+	@staticmethod
 	def from_exception(exc: BaseException) -> 'ExceptionInfo':
 		typ = type(exc)
-		return ExceptionInfo(
-			message=str(exc),
-			type=f'{typ.__module__}.{typ.__name__}',
-		)
+		typestr = type.__qualname__
+		if typ.__module__ not in (None, 'builtins'):
+			typestr = f'{typ.__module__}.{typestr}'
+		return ExceptionInfo(message=str(exc), type=typestr)
 
 
 # ------------------------------------------------------------------------------------------------ #
@@ -113,13 +117,11 @@ class JsonLogRecord:
 	type
 		String describing the general category of log record (class attribute).
 	message
-	    Formatted log message.
+		Formatted log message.
 	levelno
-	    Numeric level.
+		Numeric level.
 	created
-	    Timestamp when log record was created.
-	levelname
-	    String associated with numeric level, if any.
+		Timestamp when log record was created.
 	"""
 
 	# __pydantic_config__: ClassVar = ConfigDict(extra='forbid')
@@ -128,11 +130,11 @@ class JsonLogRecord:
 
 	message: str | None
 	levelno: int
-	levelname: str | None = None
 	# This is how the Python documentation says LogRecord.created is set, unsure how it's supposed
 	# to be different than time.time()
 	# https://docs.python.org/3/library/logging.html#logrecord-attributes
 	created: float = field(default_factory=lambda: time.time_ns() / 1e9)
+	exc_info: ExceptionInfo | None = None
 
 	def __init__(self, *args, **kw):
 		# This will be overwritten in any child classes with a @dataclass decorator
@@ -143,6 +145,14 @@ class JsonLogRecord:
 		"""Created timestamp as a :class:`datetime.datetime` instance."""
 		return datetime.fromtimestamp(self.created)
 
+	@property
+	def levelname(self) -> str:
+		"""String associated with numeric log level.
+
+		This is always determined from :attr:`levelno`, so no need to store as an actual attribute.
+		"""
+		return logging.getLevelName(self.levelno)
+
 	@staticmethod
 	def from_builtin(record: logging.LogRecord) -> 'JsonLogRecord':
 		"""Construct a log record model from a builtin :class:`logging.LogRecord` instance.
@@ -150,15 +160,16 @@ class JsonLogRecord:
 		Parameters
 		----------
 		record
-		    Log record instance from the standard logging system.
+			Log record instance from the standard logging system.
 
 		Returns
 		-------
 		JsonLogRecord
 			An instance of a suitable subclass of :class:`JsonLogRecord`.
 		"""
-		if hasattr(record, 'event') and isinstance(record.event, LogEvent):
-			cls = SNAKEMAKE_RECORD_MODELS[record.event]
+		event = getattr(record, 'event', None)
+		if isinstance(event, LogEvent):
+			cls = SNAKEMAKE_RECORD_MODELS[event]
 			return cls._from_builtin(record)
 		else:
 			return StandardLogRecord._from_builtin(record)
@@ -176,19 +187,28 @@ class JsonLogRecord:
 	@classmethod
 	def _get_attrs(cls, record: logging.LogRecord) -> dict[str, Any]:
 		"""Get attribute values from builtin log record."""
-		return dict(
+		attrs: dict[str, Any] = dict(
 			message=record.message,
 			levelno=record.levelno,
-			levelname=record.levelname,
 			created=record.created,
 		)
+		if record.exc_info is not None:
+			typ, exc, tb = record.exc_info
+			if exc is not None:
+				attrs['exc_info'] = ExceptionInfo.from_exception(exc)
+		return attrs
 
 	@model_serializer(mode='wrap')
 	def _serialize(self, handler: SerializerFunctionWrapHandler):
-		d = dict(type=self.type)
+		# Set these first so they appear at the of the record in multiline format, for easier reading
+		d: dict[str, Any] = dict(type=self.type)
 		if hasattr(self, 'event'):
 			d['event'] = str(self.event)
+		# Add this just for human readability
+		d['levelname'] = logging.getLevelName(self.levelno) if self.levelno in NAMED_LEVELS else None
 		d |= handler(self)
+		if d['exc_info'] is None:
+			del d['exc_info']
 		return d
 
 
@@ -224,8 +244,6 @@ class MetaLogRecord(JsonLogRecord):
 	type = 'meta'
 	event: ClassVar[str]
 
-	levelno: int = 0
-
 	@staticmethod
 	def _builtin_error() -> NoReturn:
 		raise TypeError('MetaLogRecord subclasses cannot be constructed from builtin log records')
@@ -257,6 +275,7 @@ class LoggingStartedRecord(MetaLogRecord):
 
 	pid: int
 	proc_started: float | None = None
+	levelno: int = logging.INFO
 	message: str | None = 'JSON logging plugin initialized'
 
 
@@ -277,12 +296,14 @@ class FormattingErrorRecord(MetaLogRecord):
 
 	record_partial: dict[str, Any]
 	exception: ExceptionInfo | None = None
+	levelno: int = logging.ERROR
+	message: str | None = 'Error converting log record to JSON'
 
 	@classmethod
 	def create(
 		cls,
 		record: logging.LogRecord,
-		exception: Exception | ExceptionInfo | None = None,
+		exception: BaseException | ExceptionInfo | None = None,
 		message: str | None = None
 	) -> 'FormattingErrorRecord':
 		"""Create from the record being formatted and the exception that occurred.
@@ -299,7 +320,7 @@ class FormattingErrorRecord(MetaLogRecord):
 
 		partial = cls._extract_partial(record)
 
-		if isinstance(exception, Exception):
+		if isinstance(exception, BaseException):
 			exception = ExceptionInfo.from_exception(exception)
 
 		if message is None:
@@ -339,7 +360,7 @@ class SnakemakeLogRecord(JsonLogRecord):
 	Attributes
 	----------
 	event
-	    The Snakemake log event type (class attribute).
+		The Snakemake log event type (class attribute).
 	"""
 
 	type = 'snakemake'

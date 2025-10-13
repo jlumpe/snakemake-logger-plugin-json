@@ -76,14 +76,17 @@ def logrecord_from_json(data: JsonData | Mapping[str, Any]) -> JsonLogRecord:
 
 	if isinstance(data, JSON_DATA_TYPES):
 		obj = json.loads(data)
-		if not isinstance(obj, Mapping):
+		if not isinstance(obj, dict):
 			raise ValueError('Parsed JSON value is not an object')
 	elif isinstance(data, Mapping):
-		obj = data
+		obj = dict(data)
 	else:
 		raise TypeError('Expected JSON-encoded string/bytes or a mapping object')
 
 	model = _get_record_model(obj)
+	obj.pop('type', None)
+	obj.pop('event', None)
+	obj.pop('levelname', None)
 	return adapter_cache.validate_python(model, obj)
 
 

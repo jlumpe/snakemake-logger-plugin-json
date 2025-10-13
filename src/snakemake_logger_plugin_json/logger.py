@@ -111,11 +111,7 @@ class JsonLogHandler(LogHandlerBase):
 		formatter = JsonFormatter(multiline=self.settings.multiline)
 		self.handler.setFormatter(formatter)  # type: ignore
 
-		start = LoggingStartedRecord(
-			pid=os.getpid(),
-			levelno=logging.INFO,
-			levelname=logging.getLevelName(logging.INFO),
-		)
+		start = LoggingStartedRecord(pid=os.getpid())
 		self.handler.emit(start)  # type: ignore
 
 	def emit(self, record):
