@@ -47,7 +47,7 @@ class JsonLogHandlerSettings(LogHandlerSettingsBase):
 
 @dataclass
 class JsonFormatter:
-	"""Log formatter.
+	"""Log formatter emitting JSON.
 
 	Attributes
 	----------

@@ -117,8 +117,7 @@ class JsonObjectParser:
 		self._current_started = 0
 
 	def process_line(self, line: str) -> _ObjParseResult | None:
-		"""Process a single line. If it concludes an object, return it.
-		"""
+		"""Process a single line. If it concludes an object, return it."""
 		self.current_line += 1
 
 		# Ignore trailing whitespace but not leading
@@ -174,15 +173,16 @@ class JsonObjectParser:
 		)
 
 	def process_lines(self, lines: Iterable[str]) -> Iterable[_ObjParseResult]:
-		"""Process multiple lines and yield all complete objects parsed.
-		"""
+		"""Process multiple lines and yield all complete objects parsed."""
 		for line in lines:
 			result = self.process_line(line)
 			if result is not None:
 				yield result
 
 	def complete(self) -> None:
-		"""
+		"""Signal that there are no more lines available.
+
+		This will raise an exception if the final JSON object has not been concluded.
 		"""
 		if self._current_obj:
 			raise JsonParseError(
